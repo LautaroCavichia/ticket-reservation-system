@@ -1,3 +1,4 @@
+# backend/src/auth/views.py
 """
 Authentication API endpoints.
 
@@ -7,6 +8,7 @@ and provides user session information.
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from marshmallow import ValidationError
+from datetime import timedelta
 
 from src.auth.models import User
 from src.auth.schemas import (
@@ -52,13 +54,21 @@ def register():
     user.set_password(data['password'])
     user.save()
     
-    # Generate access token
-    access_token = create_access_token(identity=user.id)
+    # Generate access token with proper configuration
+    access_token = create_access_token(
+        identity=str(user.id),  # Convert to string for consistency
+        expires_delta=timedelta(hours=1),
+        additional_claims={
+            'user_id': user.id,
+            'email': user.email,
+            'role': user.role.value if user.role else 'registered'
+        }
+    )
     
-    # Create response data with proper structure
+    # Create response data
     response_data = {
         'access_token': access_token,
-        'user': user.to_dict(),  # Use to_dict() instead of schema dump to avoid serialization issues
+        'user': user.to_dict(),
         'expires_in': 3600
     }
     
@@ -86,13 +96,21 @@ def login():
     if not user.is_active:
         return jsonify({'error': 'Account is deactivated'}), 401
     
-    # Generate access token
-    access_token = create_access_token(identity=user.id)
+    # Generate access token with proper configuration
+    access_token = create_access_token(
+        identity=str(user.id),  # Convert to string for consistency
+        expires_delta=timedelta(hours=1),
+        additional_claims={
+            'user_id': user.id,
+            'email': user.email,
+            'role': user.role.value if user.role else 'registered'
+        }
+    )
     
-    # Create response data with proper structure
+    # Create response data
     response_data = {
         'access_token': access_token,
-        'user': user.to_dict(),  # Use to_dict() instead of schema dump
+        'user': user.to_dict(),
         'expires_in': 3600
     }
     
@@ -108,10 +126,45 @@ def get_current_user():
     Returns user profile data for the authenticated user
     based on the JWT token.
     """
-    user_id = get_jwt_identity()
-    user = User.find_by_id(user_id)
-    
-    if not user:
-        return jsonify({'error': 'User not found'}), 404
-    
-    return jsonify(user.to_dict()), 200
+    try:
+        user_id = get_jwt_identity()
+        
+        # Convert to int if it's a string
+        if isinstance(user_id, str):
+            user_id = int(user_id)
+        
+        user = User.find_by_id(user_id)
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        if not user.is_active:
+            return jsonify({'error': 'Account is deactivated'}), 401
+        
+        return jsonify(user.to_dict()), 200
+        
+    except ValueError as e:
+        return jsonify({'error': 'Invalid user ID in token'}), 401
+    except Exception as e:
+        return jsonify({'error': 'Token validation failed'}), 401
+
+
+# Add a debug endpoint to help diagnose token issues (remove in production)
+@auth_bp.route('/debug/token', methods=['GET'])
+@jwt_required()
+def debug_token():
+    """Debug endpoint to check token claims."""
+    try:
+        from flask_jwt_extended import get_jwt
+        
+        user_id = get_jwt_identity()
+        claims = get_jwt()
+        
+        return jsonify({
+            'user_id': user_id,
+            'claims': claims,
+            'user_id_type': type(user_id).__name__
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400

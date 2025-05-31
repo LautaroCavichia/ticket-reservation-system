@@ -1,3 +1,4 @@
+# backend/src/core/config.py
 """
 Application configuration management.
 
@@ -7,6 +8,7 @@ type-safe configuration access across the application.
 import os
 from dataclasses import dataclass
 from typing import List
+from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -15,13 +17,26 @@ load_dotenv()
 @dataclass
 class Config:
     """Base configuration with common settings."""
-    SECRET_KEY: str = os.getenv('SECRET_KEY', 'dev-secret-key')
-    JWT_SECRET_KEY: str = os.getenv('JWT_SECRET_KEY', 'jwt-dev-secret')
+    SECRET_KEY: str = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
+    JWT_SECRET_KEY: str = os.getenv('JWT_SECRET_KEY', 'jwt-dev-secret-change-in-production')
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
-    JWT_ACCESS_TOKEN_EXPIRES: int = 3600  # 1 hour
+    
+    # JWT Configuration
+    JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(hours=1)
+    JWT_REFRESH_TOKEN_EXPIRES: timedelta = timedelta(days=30)
+    JWT_ALGORITHM: str = 'HS256'
+    JWT_HEADER_TYPE: str = 'Bearer'
+    JWT_HEADER_NAME: str = 'Authorization'
+    JWT_TOKEN_LOCATION: List[str] = None
+    
+    # CORS Configuration
     CORS_ORIGINS: List[str] = None
     
     def __post_init__(self):
+        # Set JWT token location
+        self.JWT_TOKEN_LOCATION = ['headers']
+        
+        # Configure CORS origins
         cors_origins = os.getenv('CORS_ORIGINS', 'http://localhost:3000')
         self.CORS_ORIGINS = [origin.strip() for origin in cors_origins.split(',')]
 
@@ -34,6 +49,12 @@ class DevelopmentConfig(Config):
         'DATABASE_URL', 
         'postgresql://postgres:password@localhost:5432/ticket_reservation_dev'
     )
+    
+    def __post_init__(self):
+        super().__post_init__()
+        # In development, use SQLite if PostgreSQL is not available
+        if not os.getenv('DATABASE_URL'):
+            self.SQLALCHEMY_DATABASE_URI = 'sqlite:///ticket_reservation.db'
 
 
 @dataclass
