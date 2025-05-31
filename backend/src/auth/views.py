@@ -55,13 +55,14 @@ def register():
     # Generate access token
     access_token = create_access_token(identity=user.id)
     
+    # Create response data with proper structure
     response_data = {
         'access_token': access_token,
-        'user': user_response_schema.dump(user),
+        'user': user.to_dict(),  # Use to_dict() instead of schema dump to avoid serialization issues
         'expires_in': 3600
     }
     
-    return jsonify(token_response_schema.dump(response_data)), 201
+    return jsonify(response_data), 201
 
 
 @auth_bp.route('/login', methods=['POST'])
@@ -88,13 +89,14 @@ def login():
     # Generate access token
     access_token = create_access_token(identity=user.id)
     
+    # Create response data with proper structure
     response_data = {
         'access_token': access_token,
-        'user': user_response_schema.dump(user),
+        'user': user.to_dict(),  # Use to_dict() instead of schema dump
         'expires_in': 3600
     }
     
-    return jsonify(token_response_schema.dump(response_data)), 200
+    return jsonify(response_data), 200
 
 
 @auth_bp.route('/me', methods=['GET'])
@@ -112,4 +114,4 @@ def get_current_user():
     if not user:
         return jsonify({'error': 'User not found'}), 404
     
-    return jsonify(user_response_schema.dump(user)), 200
+    return jsonify(user.to_dict()), 200

@@ -31,13 +31,14 @@ class UserResponseSchema(Schema):
     first_name = fields.Str(dump_only=True)
     last_name = fields.Str(dump_only=True)
     full_name = fields.Str(dump_only=True)
-    role = fields.Enum(UserRole, by_value=True, dump_only=True)
+    role = fields.Str(dump_only=True)  # Simplified to avoid enum serialization issues
     is_active = fields.Bool(dump_only=True)
-    created_at = fields.DateTime(dump_only=True)
+    created_at = fields.DateTime(dump_only=True, format='iso')
+    updated_at = fields.DateTime(dump_only=True, format='iso')
 
 
 class TokenResponseSchema(Schema):
     """Schema for authentication token responses."""
     access_token = fields.Str(required=True)
-    user = fields.Nested(UserResponseSchema, required=True)
+    user = fields.Dict(required=True)  # Simplified to avoid nested schema issues
     expires_in = fields.Int(required=True)

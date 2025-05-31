@@ -67,11 +67,26 @@ class User(BaseModel):
         return permission in permissions.get(self.role, [])
     
     def to_dict(self) -> dict:
-        """Override to exclude sensitive information."""
+        """Override to exclude sensitive information and handle serialization properly."""
         data = super().to_dict()
+        
+        # Remove sensitive fields
         data.pop('password_hash', None)
+        
+        # Add computed fields
         data['full_name'] = self.full_name
+        
+        # Handle enum serialization
+        if self.role:
+            data['role'] = self.role.value
+        
+        # Format datetime fields as ISO strings
+        if self.created_at:
+            data['created_at'] = self.created_at.isoformat()
+        if self.updated_at:
+            data['updated_at'] = self.updated_at.isoformat()
+        
         return data
     
     def __repr__(self) -> str:
-        return f"<User(email={self.email}, role={self.role.value})>"
+        return f"<User(email={self.email}, role={self.role.value if self.role else 'None'})>"
