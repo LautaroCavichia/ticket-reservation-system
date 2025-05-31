@@ -17,17 +17,27 @@ const ReservationList: React.FC = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const handleCancelReservation = async () => {
     if (!selectedReservation) return;
 
     setActionLoading(true);
+    setActionError(null);
+    
     try {
       await cancelReservation(selectedReservation.id);
+      
+      // Close modal and clear state
       setShowCancelModal(false);
       setSelectedReservation(null);
-    } catch (error) {
+      
+      // Optional: Show success message or refresh data
+      await refetch();
+      
+    } catch (error: any) {
       console.error('Failed to cancel reservation:', error);
+      setActionError(error.message || 'Failed to cancel reservation');
     } finally {
       setActionLoading(false);
     }
@@ -37,6 +47,8 @@ const ReservationList: React.FC = () => {
     if (!selectedReservation) return;
 
     setActionLoading(true);
+    setActionError(null);
+    
     try {
       // Simulate payment processing
       const paymentData = {
@@ -45,13 +57,27 @@ const ReservationList: React.FC = () => {
       };
 
       await processPayment(selectedReservation.id, paymentData);
+      
+      // Close modal and clear state
       setShowPaymentModal(false);
       setSelectedReservation(null);
-    } catch (error) {
+      
+      // Optional: Show success message or refresh data
+      await refetch();
+      
+    } catch (error: any) {
       console.error('Failed to process payment:', error);
+      setActionError(error.message || 'Failed to process payment');
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowCancelModal(false);
+    setShowPaymentModal(false);
+    setSelectedReservation(null);
+    setActionError(null);
   };
 
   const getStatusColor = (status: ReservationStatus) => {
@@ -169,6 +195,7 @@ const ReservationList: React.FC = () => {
                       onClick={() => {
                         setSelectedReservation(reservation);
                         setShowPaymentModal(true);
+                        setActionError(null);
                       }}
                     >
                       Pay Now
@@ -182,6 +209,7 @@ const ReservationList: React.FC = () => {
                       onClick={() => {
                         setSelectedReservation(reservation);
                         setShowCancelModal(true);
+                        setActionError(null);
                       }}
                     >
                       Cancel
@@ -197,7 +225,7 @@ const ReservationList: React.FC = () => {
       {/* Cancel Confirmation Modal */}
       <Modal
         isOpen={showCancelModal}
-        onClose={() => setShowCancelModal(false)}
+        onClose={handleCloseModal}
         title="Cancel Reservation"
       >
         <div className="space-y-4">
@@ -212,11 +240,17 @@ const ReservationList: React.FC = () => {
             </div>
           </div>
 
+          {actionError && (
+            <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
+              {actionError}
+            </div>
+          )}
+
           <div className="flex space-x-3">
             <Button
               variant="secondary"
               fullWidth
-              onClick={() => setShowCancelModal(false)}
+              onClick={handleCloseModal}
               disabled={actionLoading}
             >
               Keep Reservation
@@ -236,7 +270,7 @@ const ReservationList: React.FC = () => {
       {/* Payment Modal */}
       <Modal
         isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
+        onClose={handleCloseModal}
         title="Complete Payment"
       >
         <div className="space-y-4">
@@ -258,11 +292,17 @@ const ReservationList: React.FC = () => {
             </div>
           </div>
 
+          {actionError && (
+            <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
+              {actionError}
+            </div>
+          )}
+
           <div className="flex space-x-3">
             <Button
               variant="secondary"
               fullWidth
-              onClick={() => setShowPaymentModal(false)}
+              onClick={handleCloseModal}
               disabled={actionLoading}
             >
               Cancel

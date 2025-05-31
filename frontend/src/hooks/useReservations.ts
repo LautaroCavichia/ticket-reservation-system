@@ -71,12 +71,23 @@ export const useReservations = (): UseReservationsReturn => {
     try {
       const updatedReservation = await reservationsService.processPayment(reservationId, paymentData);
       
-      // Update reservation in the list
-      setReservations(prev => 
-        prev.map(res => 
-          res.id === reservationId ? updatedReservation : res
-        )
-      );
+      // Update reservation in the list using a more robust approach
+      setReservations(prev => {
+        const updatedReservations = prev.map(res => {
+          if (res.id === reservationId) {
+            // Ensure we maintain the complete reservation object structure
+            return {
+              ...res,
+              ...updatedReservation,
+              // Ensure nested objects are properly updated
+              event: updatedReservation.event || res.event,
+              user: updatedReservation.user || res.user
+            };
+          }
+          return res;
+        });
+        return updatedReservations;
+      });
       
       return updatedReservation;
     } catch (err: any) {
@@ -92,12 +103,23 @@ export const useReservations = (): UseReservationsReturn => {
     try {
       const cancelledReservation = await reservationsService.cancelReservation(reservationId);
       
-      // Update reservation in the list
-      setReservations(prev => 
-        prev.map(res => 
-          res.id === reservationId ? cancelledReservation : res
-        )
-      );
+      // Update reservation in the list using a more robust approach
+      setReservations(prev => {
+        const updatedReservations = prev.map(res => {
+          if (res.id === reservationId) {
+            // Ensure we maintain the complete reservation object structure
+            return {
+              ...res,
+              ...cancelledReservation,
+              // Ensure nested objects are properly updated
+              event: cancelledReservation.event || res.event,
+              user: cancelledReservation.user || res.user
+            };
+          }
+          return res;
+        });
+        return updatedReservations;
+      });
       
       return cancelledReservation;
     } catch (err: any) {
@@ -110,8 +132,8 @@ export const useReservations = (): UseReservationsReturn => {
     setError(null);
   }, []);
 
-  const refetch = useCallback(() => {
-    return fetchReservations();
+  const refetch = useCallback(async () => {
+    await fetchReservations();
   }, [fetchReservations]);
 
   // Auto-fetch reservations on mount
