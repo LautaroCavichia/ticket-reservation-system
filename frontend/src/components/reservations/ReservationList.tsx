@@ -8,8 +8,8 @@ import React, { useState } from 'react';
 import { useReservations } from '../../hooks/useReservations';
 import { Reservation, ReservationStatus, PaymentStatus } from '../../types/reservations';
 import { formatDateTime, formatCurrency, formatReservationStatus, formatPaymentStatus } from '../../utils/formatters';
-import Button from '../ui/Button';
 import Modal from '../ui/Modal';
+import Button from '../ui/Button';
 
 const ReservationList: React.FC = () => {
   const { reservations, loading, error, cancelReservation, processPayment, refetch } = useReservations();
@@ -104,9 +104,12 @@ const ReservationList: React.FC = () => {
       <div className="text-center py-12">
         <h3 className="text-lg font-medium text-gray-900 mb-2">No Reservations</h3>
         <p className="text-gray-600 mb-6">You haven't made any ticket reservations yet.</p>
-        <Button as="a" href="/events">
+        <a 
+          href="/events" 
+          className="inline-flex items-center justify-center font-medium rounded-md px-4 py-2 text-sm bg-primary-600 hover:bg-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+        >
           Browse Events
-        </Button>
+        </a>
       </div>
     );
   }

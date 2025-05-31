@@ -12,7 +12,7 @@ from src.core.extensions import db
 
 def init_database():
     """Initialize database with tables and sample data."""
-    with app.app_context():
+    with create_app().app_context():
         # Create all tables
         db.create_all()
         
@@ -104,6 +104,6 @@ if __name__ == '__main__':
     # Run development server
     app.run(
         host='0.0.0.0',
-        port=int(os.getenv('PORT', 5000)),
+        port=int(os.getenv('PORT', 5500)),
         debug=True
     )

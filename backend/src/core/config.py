@@ -7,6 +7,9 @@ type-safe configuration access across the application.
 import os
 from dataclasses import dataclass
 from typing import List
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 @dataclass

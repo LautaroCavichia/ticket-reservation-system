@@ -1,3 +1,11 @@
+/**
+ * Main application styles and component overrides.
+ * 
+ * Provides application-specific styling on top of Tailwind CSS
+ * base styles and custom component classes.
+ */
+
+/* Application container */
 .App {
   text-align: center;
 }
@@ -34,5 +42,406 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Custom component styles */
+.ticket-card {
+  @apply bg-white rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg hover:scale-105;
+}
+
+.ticket-card:hover {
+  transform: translateY(-2px);
+}
+
+.reservation-status-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.reservation-status-pending {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.reservation-status-confirmed {
+  @apply bg-green-100 text-green-800;
+}
+
+.reservation-status-cancelled {
+  @apply bg-red-100 text-red-800;
+}
+
+.payment-status-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.payment-status-pending {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.payment-status-completed {
+  @apply bg-green-100 text-green-800;
+}
+
+.payment-status-failed {
+  @apply bg-red-100 text-red-800;
+}
+
+.payment-status-refunded {
+  @apply bg-blue-100 text-blue-800;
+}
+
+/* Event card animations */
+.event-card {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.event-card:hover {
+  @apply shadow-xl;
+  transform: translateY(-4px);
+}
+
+.event-card .event-image {
+  @apply transition-transform duration-300;
+}
+
+.event-card:hover .event-image {
+  transform: scale(1.05);
+}
+
+/* Capacity indicator styles */
+.capacity-indicator {
+  @apply w-full bg-gray-200 rounded-full h-2 overflow-hidden;
+}
+
+.capacity-fill {
+  @apply h-full bg-gradient-to-r from-green-400 to-green-600 transition-all duration-500 ease-out;
+}
+
+.capacity-fill.medium {
+  @apply from-yellow-400 to-yellow-600;
+}
+
+.capacity-fill.high {
+  @apply from-red-400 to-red-600;
+}
+
+/* Form enhancements */
+.form-input-enhanced {
+  @apply transition-all duration-200 ease-in-out;
+  @apply focus:ring-2 focus:ring-primary-500 focus:border-primary-500;
+  @apply placeholder-gray-400;
+}
+
+.form-input-enhanced:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-error {
+  @apply text-red-600 text-sm mt-1;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button enhancements */
+.btn-primary-enhanced {
+  @apply bg-gradient-to-r from-primary-600 to-primary-700;
+  @apply hover:from-primary-700 hover:to-primary-800;
+  @apply active:from-primary-800 active:to-primary-900;
+  @apply transform transition-all duration-150 ease-in-out;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+}
+
+.btn-primary-enhanced:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primary-enhanced:active {
+  transform: translateY(0);
+}
+
+/* Loading states */
+.loading-skeleton {
+  @apply bg-gray-200 rounded animate-pulse;
+}
+
+.loading-dots {
+  display: inline-block;
+}
+
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+  100% { content: ''; }
+}
+
+/* Modal overlay enhancements */
+.modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Notification styles */
+.notification {
+  @apply fixed top-4 right-4 max-w-sm bg-white border rounded-lg shadow-lg p-4 z-50;
+  animation: slideInRight 0.3s ease-out;
+}
+
+.notification.success {
+  @apply border-green-200 bg-green-50;
+}
+
+.notification.error {
+  @apply border-red-200 bg-red-50;
+}
+
+.notification.warning {
+  @apply border-yellow-200 bg-yellow-50;
+}
+
+.notification.info {
+  @apply border-blue-200 bg-blue-50;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Navigation enhancements */
+.nav-link {
+  @apply relative transition-all duration-200 ease-in-out;
+}
+
+.nav-link::after {
+  content: '';
+  @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary-500;
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  @apply w-full;
+}
+
+/* Statistics card animations */
+.stats-card {
+  @apply bg-white rounded-lg shadow p-6 transition-all duration-300;
+}
+
+.stats-card:hover {
+  @apply shadow-md;
+  transform: translateY(-2px);
+}
+
+.stats-number {
+  @apply text-2xl font-bold text-gray-900;
+  animation: countUp 0.8s ease-out;
+}
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Search input enhancements */
+.search-input {
+  @apply relative;
+}
+
+.search-input input {
+  @apply pl-10;
+}
+
+.search-input::before {
+  content: '🔍';
+  @apply absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400;
+}
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  .mobile-hidden {
+    @apply hidden;
+  }
+  
+  .mobile-full {
+    @apply w-full;
+  }
+  
+  .mobile-stack {
+    @apply flex-col space-y-2 space-x-0;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn-primary-enhanced {
+    @apply border-2 border-black;
+  }
+  
+  .form-input-enhanced {
+    @apply border-2 border-gray-800;
+  }
+}
+
+/* Focus indicators for accessibility */
+.focus-visible {
+  @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+}
+
+/* Custom scrollbar for webkit browsers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+/* Event availability indicators */
+.availability-low {
+  @apply text-orange-600 bg-orange-100;
+}
+
+.availability-medium {
+  @apply text-yellow-600 bg-yellow-100;
+}
+
+.availability-high {
+  @apply text-green-600 bg-green-100;
+}
+
+.availability-sold-out {
+  @apply text-red-600 bg-red-100;
+}
+
+/* Permission level indicators */
+.permission-anonymous {
+  @apply text-gray-600 bg-gray-100;
+}
+
+.permission-registered {
+  @apply text-green-600 bg-green-100;
+}
+
+.permission-admin {
+  @apply text-blue-600 bg-blue-100;
+}
+
+/* Utility classes for common patterns */
+.glass-effect {
+  @apply bg-white bg-opacity-80 backdrop-blur-lg;
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.border-gradient {
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #3b82f6, #1d4ed8) border-box;
+  border: 2px solid transparent;
+}
+
+/* Animation utilities */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+.bounce-subtle {
+  animation: bounceSubtle 2s infinite;
+}
+
+@keyframes bounceSubtle {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(-2px);
   }
 }

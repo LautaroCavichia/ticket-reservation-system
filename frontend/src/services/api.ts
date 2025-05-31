@@ -6,7 +6,7 @@
  */
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5500/api';
 
 export interface ApiError {
   message: string;

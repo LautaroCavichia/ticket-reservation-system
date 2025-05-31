@@ -1,7 +1,7 @@
 """
 Authentication request/response schemas for API serialization.
 """
-from marshmallow import Schema, fields, validate, validates_email, ValidationError
+from marshmallow import Schema, fields, validate, validates, ValidationError
 from src.auth.models import UserRole
 
 
@@ -12,7 +12,7 @@ class UserRegistrationSchema(Schema):
     first_name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
     last_name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
     
-    @validates_email('email')
+    @validates('email')
     def validate_email_domain(self, value):
         """Custom email validation if needed."""
         pass
