@@ -1,0 +1,456 @@
+/**
+ * Global styles and Tailwind CSS imports.
+ * 
+ * Includes base styles, component classes, and utility
+ * overrides for the application design system.
+ */
+
+ @tailwind base;
+ @tailwind components;
+ @tailwind utilities;
+ 
+ /* Custom CSS Variables */
+ :root {
+   --color-primary: #3b82f6;
+   --color-primary-dark: #1d4ed8;
+   --color-secondary: #64748b;
+   --color-success: #10b981;
+   --color-warning: #f59e0b;
+   --color-error: #ef4444;
+   --color-info: #06b6d4;
+   
+   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+   
+   --radius-sm: 0.375rem;
+   --radius-md: 0.5rem;
+   --radius-lg: 0.75rem;
+ }
+ 
+ /* Base Styles */
+ * {
+   box-sizing: border-box;
+ }
+ 
+ html {
+   scroll-behavior: smooth;
+ }
+ 
+ body {
+   margin: 0;
+   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+     sans-serif;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+   background-color: #f9fafb;
+   color: #111827;
+   line-height: 1.6;
+ }
+ 
+ /* Focus styles for accessibility */
+ *:focus {
+   outline: 2px solid var(--color-primary);
+   outline-offset: 2px;
+ }
+ 
+ *:focus:not(:focus-visible) {
+   outline: none;
+ }
+ 
+ /* Custom Component Classes */
+ @layer components {
+   .btn {
+     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors;
+   }
+ 
+   .btn-primary {
+     @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+   }
+ 
+   .btn-secondary {
+     @apply bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500;
+   }
+ 
+   .btn-danger {
+     @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+   }
+ 
+   .form-input {
+     @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm;
+   }
+ 
+   .form-input-error {
+     @apply border-red-300 focus:ring-red-500 focus:border-red-500;
+   }
+ 
+   .card {
+     @apply bg-white overflow-hidden shadow rounded-lg;
+   }
+ 
+   .card-header {
+     @apply px-4 py-5 sm:px-6 border-b border-gray-200;
+   }
+ 
+   .card-body {
+     @apply px-4 py-5 sm:p-6;
+   }
+ 
+   .badge {
+     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+   }
+ 
+   .badge-primary {
+     @apply bg-primary-100 text-primary-800;
+   }
+ 
+   .badge-success {
+     @apply bg-green-100 text-green-800;
+   }
+ 
+   .badge-warning {
+     @apply bg-yellow-100 text-yellow-800;
+   }
+ 
+   .badge-error {
+     @apply bg-red-100 text-red-800;
+   }
+ 
+   .alert {
+     @apply rounded-md p-4;
+   }
+ 
+   .alert-success {
+     @apply bg-green-50 border border-green-200 text-green-800;
+   }
+ 
+   .alert-warning {
+     @apply bg-yellow-50 border border-yellow-200 text-yellow-800;
+   }
+ 
+   .alert-error {
+     @apply bg-red-50 border border-red-200 text-red-800;
+   }
+ 
+   .alert-info {
+     @apply bg-blue-50 border border-blue-200 text-blue-800;
+   }
+ }
+ 
+ /* Utility Classes */
+ @layer utilities {
+   .text-balance {
+     text-wrap: balance;
+   }
+ 
+   .line-clamp-1 {
+     overflow: hidden;
+     display: -webkit-box;
+     -webkit-box-orient: vertical;
+     -webkit-line-clamp: 1;
+   }
+ 
+   .line-clamp-2 {
+     overflow: hidden;
+     display: -webkit-box;
+     -webkit-box-orient: vertical;
+     -webkit-line-clamp: 2;
+   }
+ 
+   .line-clamp-3 {
+     overflow: hidden;
+     display: -webkit-box;
+     -webkit-box-orient: vertical;
+     -webkit-line-clamp: 3;
+   }
+ 
+   .scrollbar-hide {
+     -ms-overflow-style: none;
+     scrollbar-width: none;
+   }
+ 
+   .scrollbar-hide::-webkit-scrollbar {
+     display: none;
+   }
+ 
+   .gradient-primary {
+     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+   }
+ 
+   .glass-effect {
+     backdrop-filter: blur(10px);
+     background-color: rgba(255, 255, 255, 0.8);
+   }
+ }
+ 
+ /* Animations */
+ @keyframes fadeIn {
+   from {
+     opacity: 0;
+     transform: translateY(10px);
+   }
+   to {
+     opacity: 1;
+     transform: translateY(0);
+   }
+ }
+ 
+ @keyframes slideIn {
+   from {
+     transform: translateX(-100%);
+   }
+   to {
+     transform: translateX(0);
+   }
+ }
+ 
+ @keyframes pulse {
+   0%, 100% {
+     opacity: 1;
+   }
+   50% {
+     opacity: 0.5;
+   }
+ }
+ 
+ .animate-fade-in {
+   animation: fadeIn 0.3s ease-out;
+ }
+ 
+ .animate-slide-in {
+   animation: slideIn 0.3s ease-out;
+ }
+ 
+ .animate-pulse-slow {
+   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+ }
+ 
+ /* Loading States */
+ .skeleton {
+   @apply bg-gray-200 rounded animate-pulse;
+ }
+ 
+ .skeleton-text {
+   @apply h-4 bg-gray-200 rounded animate-pulse;
+ }
+ 
+ .skeleton-button {
+   @apply h-10 bg-gray-200 rounded animate-pulse;
+ }
+ 
+ .skeleton-avatar {
+   @apply w-10 h-10 bg-gray-200 rounded-full animate-pulse;
+ }
+ 
+ /* Print Styles */
+ @media print {
+   .no-print {
+     display: none !important;
+   }
+ 
+   .print-only {
+     display: block !important;
+   }
+ 
+   body {
+     background: white !important;
+     color: black !important;
+   }
+ 
+   .bg-primary-600,
+   .bg-primary-700 {
+     background-color: #1d4ed8 !important;
+     color: white !important;
+   }
+ }
+ 
+ /* Dark Mode Support (Optional) */
+ @media (prefers-color-scheme: dark) {
+   .dark-mode {
+     --color-bg: #1f2937;
+     --color-text: #f9fafb;
+     --color-border: #374151;
+   }
+ 
+   .dark-mode body {
+     background-color: var(--color-bg);
+     color: var(--color-text);
+   }
+ 
+   .dark-mode .card {
+     @apply bg-gray-800 border border-gray-700;
+   }
+ }
+ 
+ /* High Contrast Mode Support */
+ @media (prefers-contrast: high) {
+   :root {
+     --color-primary: #0000ff;
+     --color-text: #000000;
+     --color-bg: #ffffff;
+   }
+ 
+   .btn-primary {
+     @apply border-2 border-black;
+   }
+ }
+ 
+ /* Reduced Motion Support */
+ @media (prefers-reduced-motion: reduce) {
+   *,
+   *::before,
+   *::after {
+     animation-duration: 0.01ms !important;
+     animation-iteration-count: 1 !important;
+     transition-duration: 0.01ms !important;
+     scroll-behavior: auto !important;
+   }
+ }
+ 
+ /* Custom Scrollbar Styles */
+ ::-webkit-scrollbar {
+   width: 8px;
+   height: 8px;
+ }
+ 
+ ::-webkit-scrollbar-track {
+   background: #f1f5f9;
+   border-radius: 4px;
+ }
+ 
+ ::-webkit-scrollbar-thumb {
+   background: #cbd5e1;
+   border-radius: 4px;
+ }
+ 
+ ::-webkit-scrollbar-thumb:hover {
+   background: #94a3b8;
+ }
+ 
+ /* Selection Styles */
+ ::selection {
+   background-color: var(--color-primary);
+   color: white;
+ }
+ 
+ ::-moz-selection {
+   background-color: var(--color-primary);
+   color: white;
+ }
+ 
+ /* Typography Improvements */
+ h1, h2, h3, h4, h5, h6 {
+   font-weight: 600;
+   line-height: 1.25;
+   letter-spacing: -0.025em;
+ }
+ 
+ .text-gradient {
+   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+   background-clip: text;
+ }
+ 
+ /* Form Improvements */
+ .form-group {
+   @apply space-y-1;
+ }
+ 
+ .form-label {
+   @apply block text-sm font-medium text-gray-700;
+ }
+ 
+ .form-help {
+   @apply text-xs text-gray-500;
+ }
+ 
+ .form-error {
+   @apply text-xs text-red-600;
+ }
+ 
+ /* Table Styles */
+ .table {
+   @apply min-w-full divide-y divide-gray-200;
+ }
+ 
+ .table th {
+   @apply px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+ }
+ 
+ .table td {
+   @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+ }
+ 
+ .table tbody tr:nth-child(even) {
+   @apply bg-gray-50;
+ }
+ 
+ /* Responsive Design Improvements */
+ @media (max-width: 640px) {
+   .container {
+     @apply px-4;
+   }
+ 
+   .text-responsive {
+     @apply text-sm;
+   }
+ 
+   .btn-responsive {
+     @apply text-xs px-3 py-1.5;
+   }
+ }
+ 
+ /* Custom Focus Indicators */
+ .focus-visible:focus {
+   @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+ }
+ 
+ /* Loading Spinner */
+ .spinner {
+   border: 2px solid #f3f4f6;
+   border-top: 2px solid var(--color-primary);
+   border-radius: 50%;
+   width: 20px;
+   height: 20px;
+   animation: spin 1s linear infinite;
+ }
+ 
+ @keyframes spin {
+   0% { transform: rotate(0deg); }
+   100% { transform: rotate(360deg); }
+ }
+ 
+ /* Toast Notifications */
+ .toast {
+   @apply fixed top-4 right-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50;
+   animation: slideInRight 0.3s ease-out;
+ }
+ 
+ @keyframes slideInRight {
+   from {
+     transform: translateX(100%);
+     opacity: 0;
+   }
+   to {
+     transform: translateX(0);
+     opacity: 1;
+   }
+ }
+ 
+ .toast-success {
+   @apply border-green-200 bg-green-50;
+ }
+ 
+ .toast-error {
+   @apply border-red-200 bg-red-50;
+ }
+ 
+ .toast-warning {
+   @apply border-yellow-200 bg-yellow-50;
+ }
+ 
+ .toast-info {
+   @apply border-blue-200 bg-blue-50;
+ }

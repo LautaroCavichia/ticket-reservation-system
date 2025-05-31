@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta
+      name="description"
+      content="TicketReserve - A modern ticket reservation system with secure booking and payment processing"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- Preconnect to API domain for better performance -->
+    <link rel="preconnect" href="http://localhost:5000" />
+    
+    <title>TicketReserve - Event Ticket Reservations</title>
+    
+    <!-- Meta tags for SEO -->
+    <meta property="og:title" content="TicketReserve - Event Ticket Reservations" />
+    <meta property="og:description" content="Discover and reserve tickets for amazing events. Secure booking with instant confirmation." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://localhost:3000" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="%PUBLIC_URL%/favicon.ico">
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    
+    <!-- Loading indicator for better UX -->
+    <div id="loading-fallback" style="display: none;">
+      <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; color: #6b7280;">
+          Loading TicketReserve...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
