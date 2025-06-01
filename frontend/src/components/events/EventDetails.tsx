@@ -83,7 +83,7 @@ const EventDetails: React.FC = () => {
         <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-8 py-6 text-white">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2">{event.title}</h1>
+              <h1 className="text-3xl font-bold mb-2 text-primary-100">{event.title}</h1>
               <div className="flex items-center space-x-4 text-primary-100">
                 <span className="flex items-center">
                   📅 {formatDateTime(event.event_date)}
