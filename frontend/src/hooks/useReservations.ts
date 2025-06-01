@@ -1,15 +1,17 @@
 /**
- * Custom hook for reservation data management.
+ * Fixed useReservations Hook with Real-time Stats Updates
  * 
  * Provides reservation fetching, creation, payment processing,
- * and cancellation with proper state management.
+ * and cancellation with proper state management and real-time updates
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { reservationsService } from '../services/reservations';
 import { 
   Reservation, 
   CreateReservationData, 
-  PaymentData 
+  PaymentData,
+  ReservationStatus,
+  PaymentStatus
 } from '../types/reservations';
 
 interface UseReservationsReturn {
@@ -21,12 +23,28 @@ interface UseReservationsReturn {
   cancelReservation: (reservationId: number) => Promise<Reservation>;
   refetch: () => Promise<void>;
   clearError: () => void;
+  stats: {
+    total: number;
+    pending: number;
+    confirmed: number;
+    cancelled: number;
+  };
 }
 
 export const useReservations = (): UseReservationsReturn => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Calculate stats from current reservations state - memoized for performance
+  const stats = useMemo(() => {
+    return {
+      total: reservations.length,
+      pending: reservations.filter(r => r.reservation_status === ReservationStatus.PENDING).length,
+      confirmed: reservations.filter(r => r.reservation_status === ReservationStatus.CONFIRMED).length,
+      cancelled: reservations.filter(r => r.reservation_status === ReservationStatus.CANCELLED).length,
+    };
+  }, [reservations]);
 
   // Fetch user's reservations
   const fetchReservations = useCallback(async () => {
@@ -35,9 +53,13 @@ export const useReservations = (): UseReservationsReturn => {
 
     try {
       const userReservations = await reservationsService.getUserReservations();
-      setReservations(userReservations);
+      // Sort by creation date (newest first) for better UX
+      const sortedReservations = userReservations.sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      setReservations(sortedReservations);
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch reservations');
+      setError(err.message || 'Errore nel caricamento delle prenotazioni');
       setReservations([]);
     } finally {
       setLoading(false);
@@ -51,12 +73,12 @@ export const useReservations = (): UseReservationsReturn => {
     try {
       const newReservation = await reservationsService.createReservation(data);
       
-      // Add new reservation to the list
+      // Add new reservation to the beginning of the list
       setReservations(prev => [newReservation, ...prev]);
       
       return newReservation;
     } catch (err: any) {
-      setError(err.message || 'Failed to create reservation');
+      setError(err.message || 'Errore nella creazione della prenotazione');
       throw err;
     }
   }, []);
@@ -71,27 +93,28 @@ export const useReservations = (): UseReservationsReturn => {
     try {
       const updatedReservation = await reservationsService.processPayment(reservationId, paymentData);
       
-      // Update reservation in the list using a more robust approach
-      setReservations(prev => {
-        const updatedReservations = prev.map(res => {
-          if (res.id === reservationId) {
-            // Ensure we maintain the complete reservation object structure
-            return {
-              ...res,
-              ...updatedReservation,
-              // Ensure nested objects are properly updated
-              event: updatedReservation.event || res.event,
-              user: updatedReservation.user || res.user
-            };
-          }
-          return res;
-        });
-        return updatedReservations;
-      });
+      // Update reservation in the list - more robust approach
+      setReservations(prev => prev.map(reservation => {
+        if (reservation.id === reservationId) {
+          // Merge the updated data while preserving nested objects
+          return {
+            ...reservation,
+            ...updatedReservation,
+            reservation_status: ReservationStatus.CONFIRMED,
+            payment_status: PaymentStatus.COMPLETED,
+            payment_reference: updatedReservation.payment_reference,
+            // Ensure nested objects are preserved
+            event: updatedReservation.event || reservation.event,
+            user: updatedReservation.user || reservation.user,
+            updated_at: updatedReservation.updated_at || new Date().toISOString()
+          };
+        }
+        return reservation;
+      }));
       
       return updatedReservation;
     } catch (err: any) {
-      setError(err.message || 'Failed to process payment');
+      setError(err.message || 'Errore nell\'elaborazione del pagamento');
       throw err;
     }
   }, []);
@@ -103,27 +126,30 @@ export const useReservations = (): UseReservationsReturn => {
     try {
       const cancelledReservation = await reservationsService.cancelReservation(reservationId);
       
-      // Update reservation in the list using a more robust approach
-      setReservations(prev => {
-        const updatedReservations = prev.map(res => {
-          if (res.id === reservationId) {
-            // Ensure we maintain the complete reservation object structure
-            return {
-              ...res,
-              ...cancelledReservation,
-              // Ensure nested objects are properly updated
-              event: cancelledReservation.event || res.event,
-              user: cancelledReservation.user || res.user
-            };
-          }
-          return res;
-        });
-        return updatedReservations;
-      });
+      // Update reservation in the list - more robust approach
+      setReservations(prev => prev.map(reservation => {
+        if (reservation.id === reservationId) {
+          // Merge the updated data while preserving nested objects
+          return {
+            ...reservation,
+            ...cancelledReservation,
+            reservation_status: ReservationStatus.CANCELLED,
+            payment_status: reservation.payment_status === PaymentStatus.COMPLETED 
+              ? PaymentStatus.REFUNDED 
+              : PaymentStatus.PENDING,
+            can_be_cancelled: false,
+            // Ensure nested objects are preserved
+            event: cancelledReservation.event || reservation.event,
+            user: cancelledReservation.user || reservation.user,
+            updated_at: cancelledReservation.updated_at || new Date().toISOString()
+          };
+        }
+        return reservation;
+      }));
       
       return cancelledReservation;
     } catch (err: any) {
-      setError(err.message || 'Failed to cancel reservation');
+      setError(err.message || 'Errore nella cancellazione della prenotazione');
       throw err;
     }
   }, []);
@@ -150,6 +176,7 @@ export const useReservations = (): UseReservationsReturn => {
     cancelReservation,
     refetch,
     clearError,
+    stats // Real-time stats that update automatically
   };
 };
 
@@ -169,7 +196,7 @@ export const useReservation = (reservationId: number | null) => {
       const reservationData = await reservationsService.getReservation(id);
       setReservation(reservationData);
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch reservation');
+      setError(err.message || 'Errore nel caricamento della prenotazione');
       setReservation(null);
     } finally {
       setLoading(false);
@@ -195,19 +222,43 @@ export const useReservation = (reservationId: number | null) => {
 
 /**
  * Hook for reservation statistics and summary data.
+ * This now uses the stats from the main useReservations hook to ensure consistency
  */
 export const useReservationStats = () => {
-  const { reservations } = useReservations();
+  const { stats, reservations } = useReservations();
 
-  const stats = {
-    total: reservations.length,
-    pending: reservations.filter(r => r.reservation_status === 'pending').length,
-    confirmed: reservations.filter(r => r.reservation_status === 'confirmed').length,
-    cancelled: reservations.filter(r => r.reservation_status === 'cancelled').length,
-    totalAmount: reservations
-      .filter(r => r.reservation_status === 'confirmed')
-      .reduce((sum, r) => sum + r.total_amount, 0),
-  };
+  // Calculate additional stats
+  const extendedStats = useMemo(() => {
+    const totalAmount = reservations
+      .filter(r => r.reservation_status === ReservationStatus.CONFIRMED)
+      .reduce((sum, r) => sum + r.total_amount, 0);
+
+    const pendingAmount = reservations
+      .filter(r => r.reservation_status === ReservationStatus.PENDING)
+      .reduce((sum, r) => sum + r.total_amount, 0);
+
+    return {
+      ...stats,
+      totalAmount,
+      pendingAmount,
+      averageTicketPrice: stats.confirmed > 0 ? totalAmount / stats.confirmed : 0,
+    };
+  }, [stats, reservations]);
+
+  return extendedStats;
+};
+
+/**
+ * Hook for tracking reservation changes in real-time
+ */
+export const useReservationUpdates = (onUpdate?: (stats: any) => void) => {
+  const { stats } = useReservations();
+
+  useEffect(() => {
+    if (onUpdate) {
+      onUpdate(stats);
+    }
+  }, [stats, onUpdate]);
 
   return stats;
 };

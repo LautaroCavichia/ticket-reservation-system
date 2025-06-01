@@ -1,7 +1,7 @@
 /**
- * Enhanced Event Card with Glass Morphism and Modern Animations
+ * Enhanced Event Card with Images, Glass Morphism and Italian Translation
  * 
- * Beautiful card design with Tuscan-inspired styling and smooth interactions
+ * Beautiful card design with Tuscan-inspired styling, images, and smooth interactions
  */
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -18,7 +18,8 @@ import {
   faTheaterMasks,
   faMicrophone,
   faCamera,
-  faWineGlass
+  faWineGlass,
+  faClock
 } from '@fortawesome/free-solid-svg-icons';
 import { Event } from '../../types/events';
 import { useAuth } from '../../contexts/AuthContext';
@@ -44,6 +45,14 @@ const EventCard: React.FC<EventCardProps> = ({ event, onReserve, index = 0 }) =>
         hour: '2-digit', 
         minute: '2-digit',
         weekday: 'long'
+      }),
+      fullDate: date.toLocaleDateString('it-IT', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
       })
     };
   };
@@ -79,35 +88,82 @@ const EventCard: React.FC<EventCardProps> = ({ event, onReserve, index = 0 }) =>
 
   const getEventIcon = () => {
     const title = event.title.toLowerCase();
-    if (title.includes('concert') || title.includes('music') || title.includes('festival')) {
+    if (title.includes('concerto') || title.includes('music') || title.includes('festival') || title.includes('negramaro') || title.includes('giorgia') || title.includes('jovanotti') || title.includes('måneskin')) {
       return faMusic;
     }
-    if (title.includes('tech') || title.includes('conference') || title.includes('startup')) {
+    if (title.includes('tech') || title.includes('conference') || title.includes('startup') || title.includes('digital')) {
       return faLaptopCode;
     }
-    if (title.includes('theater') || title.includes('opera') || title.includes('spettacolo')) {
+    if (title.includes('teatro') || title.includes('opera') || title.includes('spettacolo') || title.includes('cinema') || title.includes('uffizi')) {
       return faTheaterMasks;
     }
     if (title.includes('comedy') || title.includes('stand-up')) {
       return faMicrophone;
     }
-    if (title.includes('photo') || title.includes('arte') || title.includes('mostra')) {
+    if (title.includes('photo') || title.includes('arte') || title.includes('mostra') || title.includes('notte bianca')) {
       return faCamera;
     }
-    if (title.includes('wine') || title.includes('vino') || title.includes('degustazione')) {
+    if (title.includes('wine') || title.includes('vino') || title.includes('degustazione') || title.includes('tartufo') || title.includes('sagra') || title.includes('chianti')) {
       return faWineGlass;
     }
     return faCalendarDays;
   };
 
+  const getEventImage = () => {
+    const title = event.title.toLowerCase();
+    
+    // Music events
+    if (title.includes('negramaro')) {
+      return 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=400&h=250&fit=crop&crop=center';
+    }
+    if (title.includes('giorgia') || title.includes('elisa')) {
+      return 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=250&fit=crop&crop=center';
+    }
+    if (title.includes('jovanotti')) {
+      return 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=250&fit=crop&crop=center';
+    }
+    if (title.includes('måneskin')) {
+      return 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=250&fit=crop&crop=center';
+    }
+    if (title.includes('concerto') || title.includes('music') || title.includes('festival')) {
+      return 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop&crop=center';
+    }
+    
+    // Tech events
+    if (title.includes('tech') || title.includes('startup') || title.includes('digital')) {
+      return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&fit=crop&crop=center';
+    }
+    
+    // Cultural events
+    if (title.includes('uffizi') || title.includes('arte')) {
+      return 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop&crop=center';
+    }
+    if (title.includes('cinema') || title.includes('montepulciano')) {
+      return 'https://images.unsplash.com/photo-1489599577372-f4f4c7334c5e?w=400&h=250&fit=crop&crop=center';
+    }
+    
+    // Food & Wine events
+    if (title.includes('tartufo') || title.includes('sagra')) {
+      return 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=250&fit=crop&crop=center';
+    }
+    if (title.includes('chianti') || title.includes('wine') || title.includes('vino')) {
+      return 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=250&fit=crop&crop=center';
+    }
+    
+    // Default Tuscan landscape
+    return 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&h=250&fit=crop&crop=center';
+  };
+
   const availability = getAvailabilityStatus();
   const eventDate = formatDate(event.event_date);
   const eventIcon = getEventIcon();
+  const eventImage = getEventImage();
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 50, scale: 0.9 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{ 
         duration: 0.6, 
         delay: index * 0.1,
@@ -117,62 +173,85 @@ const EventCard: React.FC<EventCardProps> = ({ event, onReserve, index = 0 }) =>
         y: -8,
         transition: { duration: 0.3 }
       }}
-      className="card-event group cursor-pointer"
+      className="card-event group cursor-pointer overflow-hidden h-full flex flex-col"
     >
-      {/* Event Status Badge */}
-      <div className="absolute top-4 right-4 z-10">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: index * 0.1 + 0.3 }}
-          className={`badge ${availability.color}`}
-        >
-          <FontAwesomeIcon icon={availability.icon} className="mr-1" />
-          {availability.text}
-        </motion.div>
-      </div>
-
-      {/* Event Type Icon */}
-      <div className="absolute top-4 left-4 z-10">
-        <motion.div
-          whileHover={{ rotate: 10, scale: 1.1 }}
-          className="w-10 h-10 bg-gradient-accent rounded-full flex items-center justify-center text-primary-800 shadow-lg"
-        >
-          <FontAwesomeIcon icon={eventIcon} />
-        </motion.div>
-      </div>
-
-      <div className="p-6 h-full flex flex-col">
-        {/* Date Display */}
-        <motion.div 
-          className="flex items-start justify-between mb-4 mt-8"
+      {/* Event Image with Gradient Overlay */}
+      <div className="relative h-48 overflow-hidden">
+        <motion.img
+          src={eventImage}
+          alt={event.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: index * 0.1 + 0.4 }}
+          transition={{ delay: index * 0.1 + 0.2 }}
+          loading="lazy"
+        />
+        
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60" />
+        
+        {/* Event Status Badge */}
+        <div className="absolute top-4 right-4 z-10">
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: index * 0.1 + 0.3 }}
+            className={`badge ${availability.color} backdrop-blur-sm`}
+          >
+            <FontAwesomeIcon icon={availability.icon} className="mr-1" />
+            {availability.text}
+          </motion.div>
+        </div>
+
+        {/* Event Type Icon */}
+        <div className="absolute top-4 left-4 z-10">
+          <motion.div
+            whileHover={{ rotate: 10, scale: 1.1 }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: index * 0.1 + 0.4 }}
+            className="w-10 h-10 glass rounded-full flex items-center justify-center text-primary-800 shadow-lg backdrop-blur-sm"
+          >
+            <FontAwesomeIcon icon={eventIcon} />
+          </motion.div>
+        </div>
+
+        {/* Date Display on Image */}
+        <motion.div 
+          className="absolute bottom-4 left-4 glass p-3 rounded-xl backdrop-blur-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 + 0.5 }}
         >
-          <div className="glass p-3 rounded-xl">
-            <div className="text-2xl font-display font-bold text-primary-800 leading-none">
-              {eventDate.day}
-            </div>
-            <div className="text-sm font-medium text-primary-600 uppercase">
-              {eventDate.month}
-            </div>
+          <div className="text-xl font-display font-bold text-white leading-none">
+            {eventDate.day}
           </div>
-          
-          <div className="text-right">
-            <div className="text-2xl font-bold text-primary-800">
-              {formatPrice(event.ticket_price)}
-            </div>
-            <div className="text-sm text-primary-600">per biglietto</div>
+          <div className="text-xs font-medium text-white/90 uppercase">
+            {eventDate.month}
           </div>
         </motion.div>
 
+        {/* Price Display on Image */}
+        <motion.div 
+          className="absolute bottom-4 right-4 glass p-3 rounded-xl backdrop-blur-sm text-right"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 + 0.6 }}
+        >
+          <div className="text-lg font-bold text-white">
+            {formatPrice(event.ticket_price)}
+          </div>
+          <div className="text-xs text-white/90">per biglietto</div>
+        </motion.div>
+      </div>
+
+      <div className="p-6 flex flex-col flex-grow">
         {/* Event Title */}
         <motion.h3 
           className="text-xl font-display font-semibold text-primary-800 mb-3 line-clamp-2 group-hover:text-primary-600 transition-colors"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: index * 0.1 + 0.5 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 + 0.7 }}
         >
           {event.title}
         </motion.h3>
@@ -180,9 +259,9 @@ const EventCard: React.FC<EventCardProps> = ({ event, onReserve, index = 0 }) =>
         {/* Event Description */}
         <motion.p 
           className="text-sm text-primary-700 mb-4 line-clamp-3 flex-grow"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: index * 0.1 + 0.6 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 + 0.8 }}
         >
           {event.description}
         </motion.p>
@@ -192,14 +271,14 @@ const EventCard: React.FC<EventCardProps> = ({ event, onReserve, index = 0 }) =>
           className="space-y-3 mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 + 0.7 }}
+          transition={{ delay: index * 0.1 + 0.9 }}
         >
           <div className="flex items-center text-sm text-primary-600">
-            <FontAwesomeIcon icon={faCalendarDays} className="mr-2 text-accent-600" />
-            <span className="capitalize">{eventDate.time}</span>
+            <FontAwesomeIcon icon={faClock} className="mr-2 text-accent-600 w-4" />
+            <span className="capitalize">{eventDate.fullDate}</span>
           </div>
           <div className="flex items-center text-sm text-primary-600">
-            <FontAwesomeIcon icon={faLocationDot} className="mr-2 text-accent-600" />
+            <FontAwesomeIcon icon={faLocationDot} className="mr-2 text-accent-600 w-4" />
             <span className="truncate">{event.venue_name}</span>
           </div>
         </motion.div>
@@ -209,7 +288,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onReserve, index = 0 }) =>
           className="mb-6"
           initial={{ opacity: 0, scaleX: 0 }}
           animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ delay: index * 0.1 + 0.8, duration: 0.8 }}
+          transition={{ delay: index * 0.1 + 1, duration: 0.8 }}
         >
           <div className="flex justify-between text-xs text-primary-600 mb-2">
             <span>Capienza</span>
@@ -223,17 +302,17 @@ const EventCard: React.FC<EventCardProps> = ({ event, onReserve, index = 0 }) =>
               }`}
               initial={{ width: 0 }}
               animate={{ width: `${event.occupancy_rate}%` }}
-              transition={{ delay: index * 0.1 + 1, duration: 1, ease: 'easeOut' }}
+              transition={{ delay: index * 0.1 + 1.1, duration: 1, ease: 'easeOut' }}
             />
           </div>
         </motion.div>
 
         {/* Action Buttons */}
         <motion.div 
-          className="flex items-center justify-between gap-3"
+          className="flex items-center justify-between gap-3 mt-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 + 0.9 }}
+          transition={{ delay: index * 0.1 + 1.2 }}
         >
           <Link
             to={`/events/${event.id}`}
@@ -282,12 +361,6 @@ const EventCard: React.FC<EventCardProps> = ({ event, onReserve, index = 0 }) =>
             </div>
           )}
         </motion.div>
-
-        {/* Hover Effect Overlay */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-accent-500/5 to-primary-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-          initial={false}
-        />
       </div>
     </motion.div>
   );
