@@ -9,7 +9,7 @@ import { Reservation, ReservationStatus, PaymentStatus } from '../../types/reser
 import { formatDateTime, formatCurrency, formatReservationStatus, formatPaymentStatus } from '../../utils/formatters';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTicket, faCreditCard, faTimes, faCheck, faSpinner, faCalendarDays, faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faTicket, faCreditCard, faTimes, faCheck, faSpinner, faCalendarDays, faLocationDot, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 
@@ -41,13 +41,8 @@ const ReservationList: React.FC = () => {
     
     try {
       await cancelReservation(selectedReservation.id);
-      
-      // Close modal and clear state
       setShowCancelModal(false);
       setSelectedReservation(null);
-      
-      // Stats will automatically update due to reservations state change
-      
     } catch (error: any) {
       console.error('Errore durante la cancellazione:', error);
       setActionError(error.message || 'Errore durante la cancellazione della prenotazione');
@@ -63,20 +58,14 @@ const ReservationList: React.FC = () => {
     setActionError(null);
     
     try {
-      // Simulate payment processing
       const paymentData = {
         payment_method: 'credit_card' as const,
         payment_reference: `pay_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       };
 
       await processPayment(selectedReservation.id, paymentData);
-      
-      // Close modal and clear state
       setShowPaymentModal(false);
       setSelectedReservation(null);
-      
-      // Stats will automatically update due to reservations state change
-      
     } catch (error: any) {
       console.error('Errore durante il pagamento:', error);
       setActionError(error.message || 'Errore durante l\'elaborazione del pagamento');
@@ -154,39 +143,27 @@ const ReservationList: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full"
-        />
+        <div className="w-8 h-8 border-2 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center py-8"
-      >
+      <div className="text-center py-8">
         <div className="text-red-600 mb-4 p-4 bg-red-50 rounded-xl border border-red-200">
           {error}
         </div>
         <Button onClick={refetch} variant="primary">
           Riprova
         </Button>
-      </motion.div>
+      </div>
     );
   }
 
   if (reservations.length === 0) {
     return (
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center py-12"
-      >
+      <div className="text-center py-12">
         <div className="w-24 h-24 bg-gradient-primary rounded-full flex items-center justify-center text-white mx-auto mb-6">
           <FontAwesomeIcon icon={faTicket} className="text-3xl" />
         </div>
@@ -201,26 +178,15 @@ const ReservationList: React.FC = () => {
           <FontAwesomeIcon icon={faCalendarDays} className="mr-2" />
           Esplora Eventi
         </a>
-      </motion.div>
+      </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      {/* Stats Overview - Updated in real-time */}
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-4 gap-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <motion.div 
-          key={`total-${stats.total}`}
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200 }}
-          className="card-modern p-6"
-        >
+      {/* Stats Overview - Professional without spinning animations */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="card-modern p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -232,19 +198,13 @@ const ReservationList: React.FC = () => {
               <div className="text-sm text-primary-600">Prenotazioni Totali</div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div 
-          key={`pending-${stats.pending}`}
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
-          className="card-modern p-6"
-        >
+        <div className="card-modern p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <FontAwesomeIcon icon={faSpinner} className="text-white text-xl" />
+                <FontAwesomeIcon icon={faCreditCard} className="text-white text-xl" />
               </div>
             </div>
             <div className="ml-4">
@@ -252,15 +212,9 @@ const ReservationList: React.FC = () => {
               <div className="text-sm text-primary-600">In Attesa di Pagamento</div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div 
-          key={`confirmed-${stats.confirmed}`}
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-          className="card-modern p-6"
-        >
+        <div className="card-modern p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -272,15 +226,9 @@ const ReservationList: React.FC = () => {
               <div className="text-sm text-primary-600">Confermate</div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div 
-          key={`cancelled-${stats.cancelled}`}
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, delay: 0.3 }}
-          className="card-modern p-6"
-        >
+        <div className="card-modern p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-12 h-12 bg-gradient-to-br from-red-400 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -292,25 +240,20 @@ const ReservationList: React.FC = () => {
               <div className="text-sm text-primary-600">Cancellate</div>
             </div>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Header with Actions */}
-      <motion.div 
-        className="flex items-center justify-between"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
+      <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-display font-bold text-primary-800">Le Mie Prenotazioni</h2>
           <p className="text-primary-600 mt-2">Gestisci le tue prenotazioni e i pagamenti</p>
         </div>
         <Button variant="secondary" onClick={refetch}>
-          <FontAwesomeIcon icon={faSpinner} className="mr-2" />
+          <FontAwesomeIcon icon={faRefresh} className="mr-2" />
           Aggiorna
         </Button>
-      </motion.div>
+      </div>
 
       {/* Reservations List */}
       <div className="space-y-6">

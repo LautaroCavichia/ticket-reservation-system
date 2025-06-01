@@ -220,23 +220,6 @@ const Header: React.FC = () => {
           transition={{ delay: 0.3 }}
           className="mt-3 flex items-center justify-center"
         >
-          <div className={`permission-indicator ${
-            !isAuthenticated ? 'anonymous' : ''
-          }`}>
-            <FontAwesomeIcon 
-              icon={isAuthenticated && user?.role === UserRole.REGISTERED ? faCrown : faEye} 
-              className="mr-2"
-            />
-            {isAuthenticated ? (
-              user?.role === UserRole.REGISTERED ? (
-                <>✓ Utente Registrato - Può prenotare biglietti</>
-              ) : (
-                <>○ Utente Non Registrato - Solo visualizzazione eventi</>
-              )
-            ) : (
-              <>○ Non autenticato - Solo visualizzazione eventi</>
-            )}
-          </div>
         </motion.div>
       </div>
 

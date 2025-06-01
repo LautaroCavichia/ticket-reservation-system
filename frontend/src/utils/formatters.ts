@@ -49,8 +49,8 @@ export const formatDate = (
    */
   export const formatCurrency = (
     amount: number,
-    currency: string = 'USD',
-    locale: string = 'en-US'
+    currency: string = 'EUR',
+    locale: string = 'it-IT'
   ): string => {
     return new Intl.NumberFormat(locale, {
       style: 'currency',

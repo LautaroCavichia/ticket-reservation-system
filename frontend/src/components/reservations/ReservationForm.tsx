@@ -1,9 +1,9 @@
 /**
- * Enhanced Reservation Form with Complete Italian Translation
+ * Fixed Reservation Form with Proper Modal Behavior
  * 
- * Clean modal design with better UX and Italian text
+ * Compact modal design with background scroll lock and clean quantity controls
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { reservationsService } from '../../services/reservations';
 import { Event } from '../../types/events';
 import { CreateReservationData } from '../../types/reservations';
@@ -18,7 +18,9 @@ import {
   faUsers,
   faClock,
   faShieldAlt,
-  faCheck
+  faCheck,
+  faPlus,
+  faMinus
 } from '@fortawesome/free-solid-svg-icons';
 
 interface ReservationFormProps {
@@ -38,6 +40,41 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
   const maxTickets = Math.min(event.available_tickets, 10);
   const totalAmount = event.ticket_price * ticketQuantity;
+
+  // Lock background scroll when modal opens
+  useEffect(() => {
+    // Save original body styles
+    const originalStyle = window.getComputedStyle(document.body);
+    const originalOverflow = originalStyle.overflow;
+    const originalPaddingRight = originalStyle.paddingRight;
+    
+    // Calculate scrollbar width to prevent layout shift
+    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+    
+    // Lock scroll and compensate for scrollbar
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = `${scrollBarWidth}px`;
+    document.body.classList.add('modal-open');
+    
+    return () => {
+      // Restore original styles
+      document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
+      document.body.classList.remove('modal-open');
+    };
+  }, []);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,6 +102,13 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     }
   };
 
+  const handleQuantityChange = (delta: number) => {
+    const newQuantity = ticketQuantity + delta;
+    if (newQuantity >= 1 && newQuantity <= maxTickets) {
+      setTicketQuantity(newQuantity);
+    }
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('it-IT', {
       style: 'currency',
@@ -83,24 +127,37 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     });
   };
 
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+      onClick={handleOverlayClick}
+    >
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        transition={{ duration: 0.3 }}
-        className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="sticky top-0 bg-white rounded-t-2xl p-6 border-b border-gray-200 z-10">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center text-white mr-4">
-                <FontAwesomeIcon icon={faTicket} className="text-xl" />
+              <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center text-white mr-3">
+                <FontAwesomeIcon icon={faTicket} className="text-lg" />
               </div>
               <div>
-                <h2 className="text-2xl font-display font-bold text-primary-800">Prenota Biglietti</h2>
+                <h2 className="text-xl font-display font-bold text-primary-800">Prenota Biglietti</h2>
                 <p className="text-sm text-primary-600">Completa la tua prenotazione</p>
               </div>
             </div>
@@ -108,147 +165,120 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <FontAwesomeIcon icon={faTimes} className="text-xl" />
+              <FontAwesomeIcon icon={faTimes} className="text-lg" />
             </button>
           </div>
         </div>
 
         <div className="p-6">
-          {/* Event Information */}
-          <div className="glass p-6 rounded-xl mb-6">
-            <h3 className="font-display font-semibold text-primary-800 text-xl mb-4">{event.title}</h3>
+          {/* Event Information - Compact */}
+          <div className="glass p-4 rounded-xl mb-6">
+            <h3 className="font-display font-semibold text-primary-800 text-lg mb-3 line-clamp-1">{event.title}</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-primary-700">
+            <div className="grid grid-cols-1 gap-2 text-sm text-primary-700">
               <div className="flex items-center">
-                <FontAwesomeIcon icon={faCalendarDays} className="mr-3 text-accent-600 w-4" />
-                <span>{formatDateTime(event.event_date)}</span>
+                <FontAwesomeIcon icon={faCalendarDays} className="mr-2 text-accent-600 w-4 flex-shrink-0" />
+                <span className="truncate">{formatDateTime(event.event_date)}</span>
               </div>
               <div className="flex items-center">
-                <FontAwesomeIcon icon={faLocationDot} className="mr-3 text-accent-600 w-4" />
-                <span>{event.venue_name}</span>
+                <FontAwesomeIcon icon={faLocationDot} className="mr-2 text-accent-600 w-4 flex-shrink-0" />
+                <span className="truncate">{event.venue_name}</span>
               </div>
-              <div className="flex items-center">
-                <FontAwesomeIcon icon={faUsers} className="mr-3 text-accent-600 w-4" />
-                <span>{event.available_tickets} biglietti disponibili</span>
-              </div>
-              <div className="flex items-center">
-                <FontAwesomeIcon icon={faEuroSign} className="mr-3 text-accent-600 w-4" />
-                <span>{formatPrice(event.ticket_price)} per biglietto</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <FontAwesomeIcon icon={faUsers} className="mr-2 text-accent-600 w-4" />
+                  <span>{event.available_tickets} disponibili</span>
+                </div>
+                <div className="flex items-center">
+                  <FontAwesomeIcon icon={faEuroSign} className="mr-2 text-accent-600 w-4" />
+                  <span className="font-semibold">{formatPrice(event.ticket_price)}</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Reservation Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Quantity Selector with +/- buttons */}
             <div>
-              <label htmlFor="quantity" className="block text-sm font-medium text-primary-700 mb-3">
+              <label className="block text-sm font-medium text-primary-700 mb-3">
                 <FontAwesomeIcon icon={faTicket} className="mr-2 text-accent-600" />
                 Numero di Biglietti
               </label>
-              <select
-                id="quantity"
-                value={ticketQuantity}
-                onChange={(e) => setTicketQuantity(parseInt(e.target.value))}
-                className="w-full px-4 py-3 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white/80 backdrop-blur-sm"
-              >
-                {Array.from({ length: maxTickets }, (_, i) => i + 1).map((num) => (
-                  <option key={num} value={num}>
-                    {num} {num === 1 ? 'biglietto' : 'biglietti'}
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-primary-500 mt-2">
+              <div className="flex items-center justify-center bg-primary-50 rounded-xl p-4">
+                <button
+                  type="button"
+                  onClick={() => handleQuantityChange(-1)}
+                  disabled={ticketQuantity <= 1}
+                  className="w-10 h-10 rounded-full bg-white border-2 border-primary-200 flex items-center justify-center text-primary-600 hover:bg-primary-50 hover:border-primary-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <FontAwesomeIcon icon={faMinus} />
+                </button>
+                
+                <div className="mx-6 text-center">
+                  <div className="text-2xl font-bold text-primary-800">{ticketQuantity}</div>
+                  <div className="text-xs text-primary-600">
+                    {ticketQuantity === 1 ? 'biglietto' : 'biglietti'}
+                  </div>
+                </div>
+                
+                <button
+                  type="button"
+                  onClick={() => handleQuantityChange(1)}
+                  disabled={ticketQuantity >= maxTickets}
+                  className="w-10 h-10 rounded-full bg-white border-2 border-primary-200 flex items-center justify-center text-primary-600 hover:bg-primary-50 hover:border-primary-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <FontAwesomeIcon icon={faPlus} />
+                </button>
+              </div>
+              <p className="text-xs text-primary-500 mt-2 text-center">
                 Massimo {maxTickets} biglietti per prenotazione
               </p>
             </div>
 
-            {/* Price Summary */}
-            <div className="glass p-6 rounded-xl border border-primary-200">
-              <h4 className="font-semibold text-primary-800 mb-4 flex items-center">
-                <FontAwesomeIcon icon={faEuroSign} className="mr-2 text-accent-600" />
-                Riepilogo Prezzo
-              </h4>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-primary-600">Prezzo per biglietto:</span>
-                  <span className="font-medium text-primary-800">{formatPrice(event.ticket_price)}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-primary-600">Quantità:</span>
-                  <span className="font-medium text-primary-800">{ticketQuantity}</span>
-                </div>
-                <div className="border-t border-primary-200 pt-3">
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold text-primary-700">Totale:</span>
-                    <span className="text-2xl font-bold text-primary-800">
-                      {formatPrice(totalAmount)}
-                    </span>
-                  </div>
-                </div>
+            {/* Price Summary - Compact */}
+            <div className="glass p-4 rounded-xl border border-primary-200">
+              <div className="flex justify-between items-center mb-3">
+                <span className="font-semibold text-primary-800">Totale</span>
+                <span className="text-xl font-bold text-primary-800">
+                  {formatPrice(totalAmount)}
+                </span>
               </div>
-            </div>
-
-            {/* Important Information */}
-            <div className="glass-subtle p-4 rounded-xl border border-blue-200">
-              <div className="flex items-start">
-                <FontAwesomeIcon icon={faClock} className="text-blue-600 mr-3 mt-1 flex-shrink-0" />
-                <div className="text-sm text-blue-800">
-                  <div className="font-medium mb-2">Informazioni Importanti:</div>
-                  <ul className="space-y-1 text-xs">
-                    <li>• La prenotazione sarà valida per 15 minuti</li>
-                    <li>• Dovrai completare il pagamento per confermare i biglietti</li>
-                    <li>• Puoi cancellare fino a 24 ore prima dell'evento</li>
-                    <li>• I biglietti saranno inviati via email dopo il pagamento</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Security Note */}
-            <div className="glass-subtle p-4 rounded-xl border border-green-200">
-              <div className="flex items-start">
-                <FontAwesomeIcon icon={faShieldAlt} className="text-green-600 mr-3 mt-1 flex-shrink-0" />
-                <div className="text-sm text-green-800">
-                  <div className="font-medium mb-1">Pagamento Sicuro</div>
-                  <p className="text-xs">
-                    Tutti i pagamenti sono elaborati in modo sicuro. I tuoi dati personali e di pagamento sono protetti.
-                  </p>
+              <div className="text-xs text-primary-600 space-y-1">
+                <div className="flex justify-between">
+                  <span>{formatPrice(event.ticket_price)} × {ticketQuantity}</span>
+                  <span>{formatPrice(totalAmount)}</span>
                 </div>
               </div>
             </div>
 
             {error && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-4 bg-red-50 border border-red-200 rounded-xl"
-              >
-                <div className="flex items-center text-red-700">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl">
+                <div className="flex items-center text-red-700 text-sm">
                   <FontAwesomeIcon icon={faTimes} className="mr-2" />
-                  <span className="text-sm font-medium">{error}</span>
+                  <span>{error}</span>
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Action Buttons */}
-            <div className="flex space-x-4 pt-6">
+            <div className="flex space-x-3 pt-4">
               <button
                 type="button"
                 onClick={onClose}
                 disabled={loading}
-                className="flex-1 px-6 py-3 border border-primary-300 text-primary-700 rounded-xl hover:bg-primary-50 transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-3 border border-primary-300 text-primary-700 rounded-xl hover:bg-primary-50 transition-colors disabled:opacity-50"
               >
                 Annulla
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-6 py-3 bg-gradient-primary text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3 bg-gradient-primary text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                     Creazione...
                   </div>
                 ) : (
@@ -262,7 +292,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           </form>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 
