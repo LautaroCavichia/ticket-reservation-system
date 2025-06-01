@@ -1,7 +1,7 @@
 /**
- * Enhanced Event Card with Images, Glass Morphism and Italian Translation
+ * Enhanced Event Card with Better Ticket Visibility and Subtle Animations
  * 
- * Beautiful card design with Tuscan-inspired styling, images, and smooth interactions
+ * Improved styling with better contrast for ticket availability
  */
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -19,7 +19,8 @@ import {
   faMicrophone,
   faCamera,
   faWineGlass,
-  faClock
+  faClock,
+  faExclamationTriangle
 } from '@fortawesome/free-solid-svg-icons';
 import { Event } from '../../types/events';
 import { useAuth } from '../../contexts/AuthContext';
@@ -68,21 +69,24 @@ const EventCard: React.FC<EventCardProps> = ({ event, onReserve, index = 0 }) =>
     if (event.is_sold_out) {
       return { 
         text: 'Sold Out', 
-        color: 'badge-sold-out',
-        icon: faUsers 
+        color: 'text-white bg-red-600 border-red-600',
+        icon: faUsers,
+        textColor: 'text-red-600'
       };
     }
     if (event.available_tickets < 10) {
       return { 
         text: `Solo ${event.available_tickets} rimasti`, 
-        color: 'badge-pending',
-        icon: faTicket 
+        color: 'text-white bg-orange-600 border-orange-600',
+        icon: faExclamationTriangle,
+        textColor: 'text-orange-600'
       };
     }
     return { 
       text: `${event.available_tickets} disponibili`, 
-      color: 'badge-available',
-      icon: faTicket 
+      color: 'text-white bg-green-600 border-green-600',
+      icon: faTicket,
+      textColor: 'text-green-600'
     };
   };
 
@@ -161,118 +165,77 @@ const EventCard: React.FC<EventCardProps> = ({ event, onReserve, index = 0 }) =>
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50, scale: 0.9 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-50px" }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ 
-        duration: 0.6, 
-        delay: index * 0.1,
-        ease: 'easeOut'
+        duration: 0.4, 
+        delay: Math.min(index * 0.05, 0.3) // Reduced delays
       }}
       whileHover={{ 
-        y: -8,
-        transition: { duration: 0.3 }
+        y: -4,
+        transition: { duration: 0.2 }
       }}
-      className="card-event group cursor-pointer overflow-hidden h-full flex flex-col"
+      className="card-event group cursor-pointer overflow-hidden h-full flex flex-col bg-white/95 backdrop-blur-sm"
     >
       {/* Event Image with Gradient Overlay */}
       <div className="relative h-48 overflow-hidden">
-        <motion.img
+        <img
           src={eventImage}
           alt={event.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: index * 0.1 + 0.2 }}
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
         
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60" />
         
-        {/* Event Status Badge */}
+        {/* Event Status Badge - More Visible */}
         <div className="absolute top-4 right-4 z-10">
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: index * 0.1 + 0.3 }}
-            className={`badge ${availability.color} backdrop-blur-sm`}
-          >
+          <div className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm ${availability.color}`}>
             <FontAwesomeIcon icon={availability.icon} className="mr-1" />
             {availability.text}
-          </motion.div>
+          </div>
         </div>
 
         {/* Event Type Icon */}
         <div className="absolute top-4 left-4 z-10">
-          <motion.div
-            whileHover={{ rotate: 10, scale: 1.1 }}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: index * 0.1 + 0.4 }}
-            className="w-10 h-10 glass rounded-full flex items-center justify-center text-primary-800 shadow-lg backdrop-blur-sm"
-          >
+          <div className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-primary-800 shadow-lg">
             <FontAwesomeIcon icon={eventIcon} />
-          </motion.div>
+          </div>
         </div>
 
         {/* Date Display on Image */}
-        <motion.div 
-          className="absolute bottom-4 left-4 glass p-3 rounded-xl backdrop-blur-sm"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 + 0.5 }}
-        >
-          <div className="text-xl font-display font-bold text-white leading-none">
+        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg">
+          <div className="text-xl font-display font-bold text-primary-800 leading-none">
             {eventDate.day}
           </div>
-          <div className="text-xs font-medium text-white/90 uppercase">
+          <div className="text-xs font-medium text-primary-600 uppercase">
             {eventDate.month}
           </div>
-        </motion.div>
+        </div>
 
         {/* Price Display on Image */}
-        <motion.div 
-          className="absolute bottom-4 right-4 glass p-3 rounded-xl backdrop-blur-sm text-right"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 + 0.6 }}
-        >
-          <div className="text-lg font-bold text-white">
+        <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg text-right">
+          <div className="text-lg font-bold text-primary-800">
             {formatPrice(event.ticket_price)}
           </div>
-          <div className="text-xs text-white/90">per biglietto</div>
-        </motion.div>
+          <div className="text-xs text-primary-600">per biglietto</div>
+        </div>
       </div>
 
       <div className="p-6 flex flex-col flex-grow">
         {/* Event Title */}
-        <motion.h3 
-          className="text-xl font-display font-semibold text-primary-800 mb-3 line-clamp-2 group-hover:text-primary-600 transition-colors"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 + 0.7 }}
-        >
+        <h3 className="text-xl font-display font-semibold text-primary-800 mb-3 line-clamp-2 group-hover:text-primary-600 transition-colors">
           {event.title}
-        </motion.h3>
+        </h3>
 
         {/* Event Description */}
-        <motion.p 
-          className="text-sm text-primary-700 mb-4 line-clamp-3 flex-grow"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 + 0.8 }}
-        >
+        <p className="text-sm text-primary-700 mb-4 line-clamp-3 flex-grow">
           {event.description}
-        </motion.p>
+        </p>
 
         {/* Event Details */}
-        <motion.div 
-          className="space-y-3 mb-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 + 0.9 }}
-        >
+        <div className="space-y-3 mb-6">
           <div className="flex items-center text-sm text-primary-600">
             <FontAwesomeIcon icon={faClock} className="mr-2 text-accent-600 w-4" />
             <span className="capitalize">{eventDate.fullDate}</span>
@@ -281,86 +244,62 @@ const EventCard: React.FC<EventCardProps> = ({ event, onReserve, index = 0 }) =>
             <FontAwesomeIcon icon={faLocationDot} className="mr-2 text-accent-600 w-4" />
             <span className="truncate">{event.venue_name}</span>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Capacity Bar */}
-        <motion.div 
-          className="mb-6"
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ delay: index * 0.1 + 1, duration: 0.8 }}
-        >
+        {/* Enhanced Capacity Information */}
+        <div className="mb-6 p-4 bg-primary-50/50 rounded-xl">
           <div className="flex justify-between text-xs text-primary-600 mb-2">
-            <span>Capienza</span>
-            <span>{event.tickets_sold}/{event.total_capacity}</span>
+            <span>Disponibilità</span>
+            <span className={`font-semibold ${availability.textColor}`}>
+              {event.available_tickets}/{event.total_capacity}
+            </span>
           </div>
-          <div className="capacity-bar">
-            <motion.div
+          <div className="capacity-bar mb-2">
+            <div
               className={`capacity-fill ${
                 event.occupancy_rate > 80 ? 'high' : 
                 event.occupancy_rate > 50 ? 'medium' : 'low'
               }`}
-              initial={{ width: 0 }}
-              animate={{ width: `${event.occupancy_rate}%` }}
-              transition={{ delay: index * 0.1 + 1.1, duration: 1, ease: 'easeOut' }}
+              style={{ width: `${event.occupancy_rate}%` }}
             />
           </div>
-        </motion.div>
+          <div className={`text-xs font-medium ${availability.textColor}`}>
+            {availability.text}
+          </div>
+        </div>
 
         {/* Action Buttons */}
-        <motion.div 
-          className="flex items-center justify-between gap-3 mt-auto"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 + 1.2 }}
-        >
-          <Link
-            to={`/events/${event.id}`}
-            className="flex-1"
-          >
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full btn btn-secondary text-center"
-            >
+        <div className="flex items-center justify-between gap-3 mt-auto">
+          <Link to={`/events/${event.id}`} className="flex-1">
+            <button className="w-full btn btn-secondary text-center hover:bg-primary-100 transition-colors">
               Dettagli
-            </motion.button>
+            </button>
           </Link>
 
           {canMakeReservation && !event.is_sold_out && event.is_upcoming ? (
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <button
               onClick={() => onReserve?.(event)}
-              className="flex-1 btn btn-primary"
+              className="flex-1 btn btn-primary hover:shadow-lg transition-all"
             >
               <FontAwesomeIcon icon={faTicket} className="mr-2" />
               Prenota
-            </motion.button>
+            </button>
           ) : (
             <div className="flex-1">
               {!canMakeReservation ? (
                 <Link to="/login" className="block">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full btn btn-ghost text-center"
-                  >
+                  <button className="w-full btn btn-ghost text-center border-primary-300 hover:bg-primary-50 transition-colors">
                     Accedi per prenotare
-                  </motion.button>
+                  </button>
                 </Link>
               ) : (
-                <motion.div
-                  className="w-full glass px-4 py-3 rounded-xl text-center text-sm text-primary-600"
-                  initial={{ opacity: 0.5 }}
-                  animate={{ opacity: 1 }}
-                >
+                <div className="w-full bg-gray-100 text-gray-500 px-4 py-3 rounded-xl text-center text-sm font-medium">
                   {event.is_sold_out ? 'Sold Out' : 'Evento passato'}
-                </motion.div>
+                </div>
               )}
             </div>
           )}
-        </motion.div>
+        </div>
       </div>
     </motion.div>
   );
