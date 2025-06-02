@@ -829,3 +829,273 @@
    background: rgba(255, 193, 7, 0.9) !important;
    color: var(--color-primary-dark);
  }
+ .prevent-flicker {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
+}
+
+/* Enhanced stable rendering for animated components */
+.stable-render {
+  contain: layout style paint;
+  will-change: auto;
+  transform: translateZ(0);
+}
+
+/* Fix for Framer Motion components that blink after animation */
+[data-framer-component] {
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  -webkit-transform: translateZ(0) !important;
+  transform: translateZ(0) !important;
+}
+
+/* Prevent layout shifts during animations */
+.motion-div {
+  contain: layout style;
+  backface-visibility: hidden;
+  perspective: 1000px;
+  transform: translateZ(0);
+}
+
+/* Stable background for cards to prevent flashing */
+.card-modern,
+.stats-card {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-image: none !important;
+  /* Force stable background during re-renders */
+  position: relative;
+}
+
+.card-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: inherit;
+  z-index: -1;
+  /* Prevent background flickering */
+  will-change: auto;
+}
+
+/* Toast container stability */
+.toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  pointer-events: none;
+  /* Prevent layout recalculation */
+  contain: layout;
+}
+
+.toast-item {
+  pointer-events: auto;
+  /* Stable rendering */
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Modal stability improvements */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  /* Prevent backdrop flickering */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.modal-content {
+  /* Prevent modal content flickering */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: layout style;
+}
+
+/* Enhanced form input stability */
+.form-input,
+.btn {
+  /* Prevent button/input flickering on state changes */
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  will-change: auto;
+  transform: translateZ(0);
+}
+
+/* Prevent stats animation flickering */
+.stats-value {
+  /* Stable number rendering */
+  font-variant-numeric: tabular-nums;
+  will-change: auto;
+}
+
+/* Animation completion stability */
+.motion-complete {
+  /* Apply to elements after animation completes */
+  will-change: auto !important;
+  transform: none !important;
+}
+
+/* Event list stability */
+.event-grid {
+  /* Prevent grid flickering during re-renders */
+  contain: layout;
+  transform: translateZ(0);
+}
+
+.event-card {
+  /* Individual card stability */
+  position: relative;
+  contain: layout style;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Reservation list stability */
+.reservation-item {
+  /* Prevent reservation items from flickering */
+  contain: layout style;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Header stability during scroll */
+.header-glass {
+  /* Prevent header flickering on scroll */
+  contain: layout style;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Footer stability */
+footer {
+  /* Prevent footer flickering */
+  contain: layout;
+  transform: translateZ(0);
+}
+
+/* Navigation stability */
+.nav-link {
+  /* Prevent navigation link flickering */
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Image loading stability */
+img {
+  /* Prevent image flickering during load */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  backface-visibility: hidden;
+}
+
+/* Spinner stability */
+.spinner-professional {
+  /* Prevent spinner flickering */
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Badge stability */
+.badge {
+  /* Prevent badge flickering */
+  contain: layout style;
+  backface-visibility: hidden;
+}
+
+/* Button hover stability */
+.btn:hover {
+  /* Prevent button flickering on hover */
+  backface-visibility: hidden;
+  transform: translateY(-1px) translateZ(0);
+}
+
+/* Card hover stability */
+.card-modern:hover {
+  /* Prevent card flickering on hover */
+  backface-visibility: hidden;
+  transform: translateY(-2px) translateZ(0);
+}
+
+/* Animation group stability */
+.animation-group > * {
+  /* Apply to all children of animated groups */
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* React component stability */
+[data-reactroot] {
+  /* Root component stability */
+  contain: layout;
+  transform: translateZ(0);
+}
+
+/* Prevent font loading flicker */
+.font-display,
+.font-body {
+  font-display: swap;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Critical rendering path optimization */
+.app-loaded {
+  /* Smooth transition after app loads */
+  transition: opacity 0.3s ease-in-out;
+}
+
+.app-loading {
+  /* Prevent FOUC */
+  opacity: 0;
+}
+
+/* Memory and performance optimizations */
+.performance-optimized {
+  /* Apply to performance-critical components */
+  contain: strict;
+  content-visibility: auto;
+  contain-intrinsic-size: 300px;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+    /* Prevent all flickering in reduced motion mode */
+    will-change: auto !important;
+    transform: none !important;
+  }
+}
+
+/* High refresh rate display optimization */
+@media (min-resolution: 120dpi) {
+  * {
+    /* Optimize for high refresh rate displays */
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+}
+
+/* Container query stability (if supported) */
+@supports (container-type: inline-size) {
+  .container-stable {
+    container-type: inline-size;
+    contain: layout style;
+  }
+}

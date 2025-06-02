@@ -257,7 +257,7 @@ const ReservationList: React.FC = () => {
 
       {/* Reservations List */}
       <div className="space-y-6">
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {reservations.map((reservation: Reservation, index: number) => (
             <motion.div
               key={reservation.id}

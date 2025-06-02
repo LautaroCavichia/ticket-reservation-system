@@ -163,7 +163,7 @@ const App: React.FC = () => {
             <footer className="relative z-10 mt-20">
               <div className="glass-strong backdrop-blur-lg border-t border-primary-200/30">
                 <div className="container mx-auto px-4 py-12">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Brand Section */}
                     <div className="md:col-span-2">
                       <div className="flex items-center space-x-3 mb-6">
@@ -182,7 +182,7 @@ const App: React.FC = () => {
                       <p className="text-primary-700 leading-relaxed mb-6 max-w-md">
                         Una piattaforma moderna per la gestione e prenotazione di eventi in Toscana. 
                         Dimostra l'implementazione di autenticazione sicura, controllo degli accessi 
-                        e design moderno con glass morphism.
+                        e design moderno.
                       </p>
                       <div className="flex space-x-3">
                         {[
@@ -199,26 +199,6 @@ const App: React.FC = () => {
                           </span>
                         ))}
                       </div>
-                    </div>
-
-                    {/* Features */}
-                    <div>
-                      <h4 className="text-lg font-semibold text-primary-800 mb-4">Caratteristiche</h4>
-                      <ul className="space-y-3 text-sm text-primary-600">
-                        {[
-                          'Autenticazione JWT',
-                          'Controllo Accessi',
-                          'Design Responsivo',
-                          'Glass Morphism UI',
-                          'Animazioni Fluide',
-                          'API RESTful'
-                        ].map((feature) => (
-                          <li key={feature} className="flex items-center">
-                            <span className="w-2 h-2 bg-accent-500 rounded-full mr-3"></span>
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
                     </div>
 
                     {/* Demo Info */}
@@ -247,14 +227,14 @@ const App: React.FC = () => {
                   <div className="border-t border-primary-200/30 mt-12 pt-8">
                     <div className="flex flex-col md:flex-row justify-between items-center">
                       <div className="text-sm text-primary-600 mb-4 md:mb-0">
-                        &copy; 2025 ToscanaEvents. Applicazione dimostrativa per showcase API.
+                        &copy; 2025 ToscanaEvents. Applicazione dimostrativa per showcase API. Corso di PPM - Università degli Studi di Firenze
                       </div>
                       <div className="flex items-center space-x-6 text-sm text-primary-600">
                         <span className="flex items-center">
                           <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
                           Sistema Attivo
                         </span>
-                        <span>Sviluppato con ❤️ in Toscana</span>
+                        <span>Sviluppato con ❤️ in Toscana da <a href="https://www.linkedin.com/in/lautaro-cavichia/" className="text-primary-800 hover:text-accent-600 transition-colors">Lautaro Cavichia</a></span>
                       </div>
                     </div>
                   </div>

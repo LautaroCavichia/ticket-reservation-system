@@ -67,10 +67,14 @@ const EventDetails: React.FC = () => {
       return 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop&crop=center';
     }
     if (title.includes('tech') || title.includes('startup') || title.includes('digital')) {
-      return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=400&fit=crop&crop=center';
+      // return 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=800&h=400&fit=crop&crop=center'; // or https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=400&fit=crop&crop=center randomly
+      return Math.random() > 0.5
+        ? 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=800&h=400&fit=crop&crop=center'
+        : 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=400&fit=crop&crop=center';
+
     }
     if (title.includes('uffizi') || title.includes('arte')) {
-      return 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=400&fit=crop&crop=center';
+      return 'https://images.unsplash.com/flagged/photo-1572392640988-ba48d1a74457?w=800&h=400&fit=crop&crop=center';
     }
     if (title.includes('cinema') || title.includes('montepulciano')) {
       return 'https://images.unsplash.com/photo-1489599577372-f4f4c7334c5e?w=800&h=400&fit=crop&crop=center';

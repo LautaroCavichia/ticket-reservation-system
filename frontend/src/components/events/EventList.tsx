@@ -8,12 +8,12 @@ import { eventsService } from '../../services/events';
 import { Event, EventListParams } from '../../types/events';
 import EventCard from './EventCard';
 import ReservationForm from '../reservations/ReservationForm';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faSearch, 
-  faFilter, 
-  faCalendarDays, 
+import {
+  faSearch,
+  faFilter,
+  faCalendarDays,
   faTicket,
   faMusic,
   faLaptopCode,
@@ -135,7 +135,7 @@ const EventList: React.FC = () => {
 
   if (error) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center py-12"
@@ -161,7 +161,7 @@ const EventList: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Search and Filters */}
-      <motion.div 
+      <motion.div
         className="card-modern p-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -201,11 +201,10 @@ const EventList: React.FC = () => {
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                    selectedCategory === category.id
+                  className={`inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${selectedCategory === category.id
                       ? 'bg-gradient-primary text-white shadow-lg'
                       : 'bg-white/60 text-primary-700 border border-primary-200 hover:bg-primary-50'
-                  }`}
+                    }`}
                 >
                   <FontAwesomeIcon icon={category.icon} className="mr-2" />
                   {category.name}
@@ -261,63 +260,65 @@ const EventList: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Events Grid */}
-      {filteredEvents.length === 0 ? (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center py-16"
-        >
-          <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <FontAwesomeIcon icon={faTicket} className="text-primary-600 text-3xl" />
-          </div>
-          <h3 className="text-xl font-semibold text-primary-800 mb-3">
-            {events.length === 0 ? 'Nessun evento disponibile' : 'Nessun evento trovato'}
-          </h3>
-          <p className="text-primary-600 mb-6 max-w-md mx-auto">
-            {events.length === 0 
-              ? 'Al momento non ci sono eventi disponibili. Torna presto per scoprire nuovi eventi!' 
-              : searchTerm 
-                ? 'Prova a modificare i termini di ricerca o i filtri selezionati'
-                : 'Nessun evento corrisponde ai filtri selezionati'
-            }
-          </p>
-          {(searchTerm || selectedCategory !== 'all' || !showUpcomingOnly || !showAvailableOnly) && (
-            <button
-              onClick={clearFilters}
-              className="btn btn-primary"
-            >
-              <FontAwesomeIcon icon={faTimes} className="mr-2" />
-              Rimuovi tutti i filtri
-            </button>
-          )}
-        </motion.div>
-      ) : (
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          {filteredEvents.map((event, index) => (
-            <motion.div
-              key={event.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 0.5, 
-                delay: Math.min(index * 0.1, 0.8) // Cap delay at 0.8s
-              }}
-            >
-              <EventCard
-                event={event}
-                onReserve={handleReserveTickets}
-                index={index}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
-      )}
+      <AnimatePresence mode="wait">
+        {/* Events Grid */}
+        {filteredEvents.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-16"
+          >
+            <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <FontAwesomeIcon icon={faTicket} className="text-primary-600 text-3xl" />
+            </div>
+            <h3 className="text-xl font-semibold text-primary-800 mb-3">
+              {events.length === 0 ? 'Nessun evento disponibile' : 'Nessun evento trovato'}
+            </h3>
+            <p className="text-primary-600 mb-6 max-w-md mx-auto">
+              {events.length === 0
+                ? 'Al momento non ci sono eventi disponibili. Torna presto per scoprire nuovi eventi!'
+                : searchTerm
+                  ? 'Prova a modificare i termini di ricerca o i filtri selezionati'
+                  : 'Nessun evento corrisponde ai filtri selezionati'
+              }
+            </p>
+            {(searchTerm || selectedCategory !== 'all' || !showUpcomingOnly || !showAvailableOnly) && (
+              <button
+                onClick={clearFilters}
+                className="btn btn-primary"
+              >
+                <FontAwesomeIcon icon={faTimes} className="mr-2" />
+                Rimuovi tutti i filtri
+              </button>
+            )}
+          </motion.div>
+        ) : (
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            {filteredEvents.map((event, index) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: Math.min(index * 0.1, 0.8) // Cap delay at 0.8s
+                }}
+              >
+                <EventCard
+                  event={event}
+                  onReserve={handleReserveTickets}
+                  index={index}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Reservation Form Modal */}
       {showReservationForm && selectedEvent && (

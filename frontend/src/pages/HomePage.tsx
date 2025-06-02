@@ -45,12 +45,6 @@ const HomePage: React.FC = () => {
       title: 'Disponibilità in Tempo Reale',
       description: 'Monitoraggio istantaneo della disponibilità dei biglietti con aggiornamenti live.',
       color: 'from-purple-400 to-purple-600'
-    },
-    {
-      icon: faCreditCard,
-      title: 'Pagamenti Sicuri',
-      description: 'Sistema di pagamento integrato per completare le prenotazioni in sicurezza.',
-      color: 'from-yellow-400 to-yellow-600'
     }
   ];
 
@@ -302,13 +296,9 @@ const HomePage: React.FC = () => {
             <h2 className="text-4xl font-display font-bold text-primary-800 mb-6">
               Caratteristiche della Piattaforma
             </h2>
-            <p className="text-xl text-primary-600 max-w-3xl mx-auto">
-              Un sistema moderno e sicuro per la gestione degli eventi, 
-              costruito con le migliori tecnologie web.
-            </p>
           </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -351,12 +341,8 @@ const HomePage: React.FC = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-display font-bold text-primary-800 mb-6">
-              Stack Tecnologico Moderno
+              Stack Utilizzato
             </h2>
-            <p className="text-xl text-primary-600 max-w-3xl mx-auto">
-              Costruito con le tecnologie più avanzate per garantire prestazioni, 
-              sicurezza e scalabilità ottimali.
-            </p>
           </motion.div>
           
           <motion.div
@@ -364,9 +350,9 @@ const HomePage: React.FC = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="glass-strong rounded-3xl p-8 max-w-4xl mx-auto"
+            className="glass-strong rounded-3xl p-8 max-w-2xl mx-auto"
           >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-4 text-center">
               <div>
                 <h4 className="text-lg font-semibold text-primary-800 mb-4">Frontend</h4>
                 <div className="space-y-2 text-sm text-primary-600">
@@ -387,15 +373,6 @@ const HomePage: React.FC = () => {
                 </div>
               </div>
               
-              <div>
-                <h4 className="text-lg font-semibold text-primary-800 mb-4">Caratteristiche</h4>
-                <div className="space-y-2 text-sm text-primary-600">
-                  <div>Glass Morphism UI</div>
-                  <div>Design Responsivo</div>
-                  <div>Controllo Accessi</div>
-                  <div>Animazioni Fluide</div>
-                </div>
-              </div>
             </div>
           </motion.div>
         </div>
