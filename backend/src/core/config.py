@@ -67,6 +67,15 @@ class ProductionConfig(Config):
         super().__post_init__()
         if not self.SQLALCHEMY_DATABASE_URI:
             raise ValueError("DATABASE_URL must be set in production")
+        
+        # Fix for NEON/PostgreSQL SSL requirement
+        if self.SQLALCHEMY_DATABASE_URI and self.SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
+            self.SQLALCHEMY_DATABASE_URI = self.SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+        
+        # Ensure SSL mode for NEON
+        if '?sslmode=' not in self.SQLALCHEMY_DATABASE_URI:
+            connector = '&' if '?' in self.SQLALCHEMY_DATABASE_URI else '?'
+            self.SQLALCHEMY_DATABASE_URI += f'{connector}sslmode=require'
 
 
 def get_config() -> Config:
