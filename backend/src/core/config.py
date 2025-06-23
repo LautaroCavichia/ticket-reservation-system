@@ -68,9 +68,11 @@ class ProductionConfig(Config):
         if not self.SQLALCHEMY_DATABASE_URI:
             raise ValueError("DATABASE_URL must be set in production")
         
-        # Fix for NEON/PostgreSQL SSL requirement
+        # Fix for NEON/PostgreSQL SSL requirement and psycopg3 compatibility
         if self.SQLALCHEMY_DATABASE_URI and self.SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
-            self.SQLALCHEMY_DATABASE_URI = self.SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+            self.SQLALCHEMY_DATABASE_URI = self.SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql+psycopg://', 1)
+        elif self.SQLALCHEMY_DATABASE_URI and self.SQLALCHEMY_DATABASE_URI.startswith('postgresql://'):
+            self.SQLALCHEMY_DATABASE_URI = self.SQLALCHEMY_DATABASE_URI.replace('postgresql://', 'postgresql+psycopg://', 1)
         
         # Ensure SSL mode for NEON
         if '?sslmode=' not in self.SQLALCHEMY_DATABASE_URI:
