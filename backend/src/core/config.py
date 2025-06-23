@@ -47,7 +47,7 @@ class DevelopmentConfig(Config):
     DEBUG: bool = True
     SQLALCHEMY_DATABASE_URI: str = os.getenv(
         'DATABASE_URL', 
-        'postgresql://postgres:password@localhost:5432/ticket_reservation_dev'
+        'postgresql+psycopg://postgres:password@localhost:5432/ticket_reservation_dev'
     )
     
     def __post_init__(self):
