@@ -30,7 +30,7 @@ def permission_required(permission: str):
             if not user_id:
                 return jsonify({'error': 'Authentication required'}), 401
             
-            user = User.find_by_id(user_id)
+            user = User.find_by_id(int(user_id))
             
             if not user or not user.is_active:
                 return jsonify({'error': 'User not found or inactive'}), 401

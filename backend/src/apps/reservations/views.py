@@ -41,7 +41,7 @@ def list_user_reservations():
     Restricted to registered users. Returns user's reservation
     history with event and payment information.
     """
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     reservations = Reservation.query.filter_by(user_id=user_id)\
         .order_by(Reservation.created_at.desc())\
@@ -59,7 +59,7 @@ def get_reservation(reservation_id):
     
     Users can only access their own reservations for security.
     """
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     reservation = Reservation.query.filter_by(
         id=reservation_id, 
@@ -82,7 +82,7 @@ def create_reservation():
     Validates event availability, reserves tickets, and creates
     reservation record with pending payment status.
     """
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     try:
         data = reservation_create_schema.load(request.json)
@@ -137,7 +137,7 @@ def process_payment(reservation_id):
     Simulates payment processing and updates reservation status.
     In production, this would integrate with a real payment gateway.
     """
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     try:
         data = payment_process_schema.load(request.json)
@@ -185,7 +185,7 @@ def cancel_reservation(reservation_id):
     Releases tickets back to event and updates reservation status.
     Handles refund processing for confirmed payments.
     """
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     reservation = Reservation.query.filter_by(
         id=reservation_id, 
@@ -228,7 +228,7 @@ def update_reservation(reservation_id):
     Limited updates allowed - primarily for administrative
     status changes and payment reference updates.
     """
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     try:
         data = reservation_update_schema.load(request.json)
