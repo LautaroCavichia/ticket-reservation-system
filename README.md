@@ -2,6 +2,11 @@
 
 A complete REST API application built with Flask (Python) backend and React TypeScript frontend, for PPM course backend project.
 
+Front-end app link: https://toscana-events.netlify.app
+Back-end app link: https://toscana-events.onrender.com
+
+I used NeonDB for the database.
+
 ## 🎯 Project Overview
 
 This application implements a ticket reservation system with:
@@ -11,7 +16,6 @@ This application implements a ticket reservation system with:
 - **2 permission levels**: Anonymous (view only) and Registered (full access)
 - **Extended User model**: Custom user class with role-based permissions
 - **JWT Authentication**: Secure token-based authentication
-- **Minimal functional frontend**: React client showcasing API capabilities
 
 ## 🏗️ Architecture
 
@@ -41,16 +45,16 @@ This application implements a ticket reservation system with:
 ### Backend Setup
 ```bash
 cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
+  python -m venv .venv
+  source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+  pip install -r requirements.txt
 
-# Setup environment
-cp .env.example .env
-# Edit .env with your database credentials
+  # Setup environment
+  cp .env.example .env
+  # Edit .env with your database credentials
 
-# Initialize database
-python run.py
+  # Initialize database
+  python app.py
 ```
 
 
